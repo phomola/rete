@@ -100,10 +100,15 @@ type AlphaNode struct {
 	tuples  []*Tuple
 	indices map[alphaIndexKey][]*Tuple
 	targets []targetNode
+	actions []func(*Sequence)
 }
 
 func NewAlphaNode(sig string) *AlphaNode {
-	return &AlphaNode{sig, nil, make(map[alphaIndexKey][]*Tuple), nil}
+	return &AlphaNode{sig, nil, make(map[alphaIndexKey][]*Tuple), nil, nil}
+}
+
+func (node *AlphaNode) AddAction(a func(*Sequence)) {
+	node.actions = append(node.actions, a)
 }
 
 func (node *AlphaNode) EnumSequences(cb func(*Sequence)) {
@@ -128,8 +133,12 @@ func (node *AlphaNode) AddTuple(tuple *Tuple) bool {
 		index = append(index, tuple)
 		node.indices[key] = index
 	}
+	seq := NewSequence(tuple)
 	for _, t := range node.targets {
-		t.node.Notify(t.index, NewSequence(tuple))
+		t.node.Notify(t.index, seq)
+	}
+	for _, a := range node.actions {
+		a(seq)
 	}
 	return true
 }
