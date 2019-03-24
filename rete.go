@@ -83,6 +83,7 @@ func (seq *Sequence) String() string {
 
 type Node interface {
 	EnumSequences(cb func(*Sequence))
+	Clear()
 }
 
 type alphaIndexKey struct {
@@ -105,6 +106,11 @@ type AlphaNode struct {
 
 func NewAlphaNode(sig string) *AlphaNode {
 	return &AlphaNode{sig, nil, make(map[alphaIndexKey][]*Tuple), nil, nil}
+}
+
+func (node *AlphaNode) Clear() {
+	node.tuples = nil
+	node.indices = make(map[alphaIndexKey][]*Tuple)
 }
 
 func (node *AlphaNode) AddAction(a func(*Sequence)) {
@@ -171,6 +177,11 @@ type BetaNode struct {
 
 func NewBetaNode() *BetaNode {
 	return &BetaNode{indices: make(map[betaIndexKey][]*Sequence)}
+}
+
+func (node *BetaNode) Clear() {
+	node.sequences = nil
+	node.indices = make(map[betaIndexKey][]*Sequence)
 }
 
 func (node *BetaNode) AddBinding(b Binding) {
