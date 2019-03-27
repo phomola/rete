@@ -308,9 +308,10 @@ func (net *Network) AddTuple(functor string, comps ...string) {
 func (net *Network) String() string {
 	sb := strings.Builder{}
 	for sig, node := range net.alphaNodes {
-		fmt.Println(sig)
+		sb.WriteString(sig)
+		sb.WriteString("\n")
 		for _, tuple := range node.tuples {
-			fmt.Printf(" %s\n", tuple)
+			sb.WriteString(fmt.Sprintf(" %s\n", tuple))
 		}
 	}
 	return sb.String()
